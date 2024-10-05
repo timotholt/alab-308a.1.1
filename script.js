@@ -137,22 +137,15 @@ function NON_BLOCKING_findPrimesUpToN(n) {
 
     // Empty the list
     listOfPrimes = [];
-    let calulatingPrimes = true;
 
     // If we haven't printed any primes, don't print a comma
     let printedAnyPrimes = false;
-    let printedStartMessage = false;
+    let calculatingPrimes = true;
 
     function renderAnyFoundPrimes() {
 
         // if there are any numbers in our queue
         if (listOfPrimes.length > 0) {
-
-            if (printedStartMessage === false)
-            {
-                primeNumbersDivNonBlocking.textContent += "START NON-BLOCKING VERSION: ";
-                printedStartMessage = true;
-            }
 
             // If we printed any previous primes, add a comma
             if (printedAnyPrimes) {
@@ -165,23 +158,29 @@ function NON_BLOCKING_findPrimesUpToN(n) {
             printedAnyPrimes = true;
 
             // Empty the list
-            listOfPrimes = [];
+            listOfPrimes.length = 0;
         }
 
-        // If we are still calculating primes, 100ms from now..
-        // call the render function again
-        if (calulatingPrimes)
-            setTimeout(renderAnyFoundPrimes, 0);
+        // Tell the scheduler to call our timeout function again
+        if (calculatingPrimes)
+            setTimeout(renderAnyFoundPrimes, 200);
     }
 
-    // Loop through all primes between 2 and n
-    for (let i = 2; i <= n; i++) {
+    function findPrimesRecursively(i) {
 
-        let startedOtherThread = false;
-        let isPrime = true;
-        
-        // Compare smaller numbers 
+        // Tell other thread we are done
+        if (i > n) {
+            calculatingPrimes = false;
+            return;
+        }
+
+        // Think of n as a global here even tho it's parent scope
+        if (i <= n) {
+            let isPrime = true;
+
+        // Compare smaller numbers
         for (let j = 2; j <= Math.sqrt(i); j++) {
+
             // If we can divide j into i, it's not prime
             if (i % j === 0) {
                 isPrime = false;
@@ -189,63 +188,26 @@ function NON_BLOCKING_findPrimesUpToN(n) {
             }
         }
 
-        // If the number is prime
-        if (isPrime) {
-            // Add it to the list
-            listOfPrimes.push(i);
-        }
+        // If it's a prime number, add it to the list
+        if (isPrime)
+            listOfPrimes.push(i); 
 
-        // After we check if i is prime or not, we try to render out any numbers
-        // in the "queue" (listOfPrimes[])
-        if (!startedOtherThread) {
-            renderAnyFoundPrimes();
-            startedOtherThread = true;
+        // Schedule the next iteration after a short delay
+        setTimeout(findPrimesRecursively, 0, i + 1);
         }
     }
 
-    // We are done calculating primes
-    calulatingPrimes = false;
+    // Schedule the next iteration after a short delay
+    findPrimesRecursively(2);
+    renderAnyFoundPrimes();
 }
 
 // Example usage:
-BLOCKING_findPrimesUpToN(10000);
-window.alert("BLOCKING Prime number calculation finished!");
+//BLOCKING_findPrimesUpToN(10000);
+//window.alert("BLOCKING Prime number calculation finished!");
 
 // NON_BLOCKING_findPrimesUpToN(100000);
-// setTimeout(NON_BLOCKING_findPrimesUpToN(100000), 0);
-// window.alert("NON-BLOCKING Prime number calculation finished!");
-
-function findPrimes(n) {
-    const primes = [];
-    let renderedCount = 0;
-  
-    const renderPrimes = () => {
-      if (renderedCount < primes.length) {
-        primeNumbersDivNonBlocking.textContent = primes.slice(0, renderedCount + 1).join(", ");
-        renderedCount++;
-        setTimeout(renderPrimes, 0);
-      } else {
-        alert("Prime number calculation finished!");
-      }
-    };
-  
-    for (let i = 2; i <= n; i++) {
-      let isPrime = true;
-      for (let j = 2; j <= Math.sqrt(i); j++) {
-        if (i % j === 0) {
-          isPrime = false;
-          break;
-        }
-      }
-      if (isPrime) {
-        primes.push(i);
-      }
-    }
-  
-    renderPrimes();
-  }
-  
-  // Example usage:
-  setTimeout(() => findPrimes(10000), 0);
+setTimeout(NON_BLOCKING_findPrimesUpToN(10000), 0);
+window.alert("NON-BLOCKING Prime number calculation finished!");
 
 console.log(`bye`);

@@ -1,0 +1,38 @@
+// This one is brutally fast but I don't understand why.
+// I don't try to understand it.  It's better than mine.
+
+function findPrimes(n) {
+    const primes = [];
+    let renderedCount = 0;
+  
+    const renderPrimes = () => {
+      if (renderedCount < primes.length) {
+        primeNumbersDivNonBlocking.textContent = primes.slice(0, renderedCount + 1).join(", ");
+        renderedCount++;
+        setTimeout(renderPrimes, 0);
+      } else {
+        alert("Prime number calculation finished!");
+      }
+    };
+  
+    for (let i = 2; i <= n; i++) {
+
+      let isPrime = true;
+      
+      for (let j = 2; j <= Math.sqrt(i); j++) {
+        if (i % j === 0) {
+          isPrime = false;
+          break;
+        }
+      }
+
+      if (isPrime) {
+        primes.push(i);
+      }
+    }
+  
+    renderPrimes();
+  }
+  
+// Example usage:
+setTimeout(() => findPrimes(10000), 0);
