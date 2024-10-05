@@ -1,5 +1,5 @@
-// This one is brutally fast but I don't understand why.
-// I don't try to understand it.  It's better than mine.
+// Example code.  This isn't my code. This one is brutally fast but I don't understand why.
+// It's wayyy better than mine.
 
 function findPrimes(n) {
     const primes = [];
