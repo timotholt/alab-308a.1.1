@@ -161,7 +161,7 @@ function NON_BLOCKING_findPrimesUpToN(n) {
             listOfPrimes.length = 0;
         }
 
-        // Tell the scheduler to call our timeout function again
+        // Tell the scheduler to call our timeout function again 200ms from now
         if (calculatingPrimes)
             setTimeout(renderAnyFoundPrimes, 200);
     }
@@ -169,10 +169,10 @@ function NON_BLOCKING_findPrimesUpToN(n) {
     function findPrimesRecursively(i) {
 
         // Tell other thread we are done
-        if (i > n) {
-            calculatingPrimes = false;
-            return;
-        }
+        // if (i > n) {
+        //     calculatingPrimes = false;
+        //     return;
+        // }
 
         // Think of n as a global here even tho it's parent scope
         if (i <= n) {
@@ -192,7 +192,7 @@ function NON_BLOCKING_findPrimesUpToN(n) {
         if (isPrime)
             listOfPrimes.push(i); 
 
-        // Schedule the next iteration after a short delay
+        // Schedule the next iteration
         setTimeout(findPrimesRecursively, 0, i + 1);
         }
     }
@@ -203,10 +203,9 @@ function NON_BLOCKING_findPrimesUpToN(n) {
 }
 
 // Example usage:
-//BLOCKING_findPrimesUpToN(10000);
-//window.alert("BLOCKING Prime number calculation finished!");
+BLOCKING_findPrimesUpToN(10000);
+window.alert("BLOCKING Prime number calculation finished!");
 
-// NON_BLOCKING_findPrimesUpToN(100000);
 setTimeout(NON_BLOCKING_findPrimesUpToN(10000), 0);
 window.alert("NON-BLOCKING Prime number calculation finished!");
 
